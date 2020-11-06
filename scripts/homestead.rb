@@ -610,8 +610,12 @@ class Homestead
     if settings.has_key?('backup') && settings['backup'] && (Vagrant::VERSION >= '2.1.0' || Vagrant.has_plugin?('vagrant-triggers'))
       dir_prefix = '/vagrant/'
       settings['databases'].each do |database|
-        Homestead.backup_mysql(database, "#{dir_prefix}/mysql_backup", config)
-        Homestead.backup_postgres(database, "#{dir_prefix}/postgres_backup", config)
+        if ( enabled_databases.include? 'mysql8' ) || ( enabled_databases.include? 'mariadb' )
+            Homestead.backup_mysql(database, "#{dir_prefix}/mysql_backup", config)
+        end
+        if enabled_databases.include? 'postgres'
+            Homestead.backup_postgres(database, "#{dir_prefix}/postgres_backup", config)
+        end
       end
     end
 
